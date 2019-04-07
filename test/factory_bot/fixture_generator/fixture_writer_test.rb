@@ -12,7 +12,7 @@ describe "FactoryBot::FixtureGenerator::FixtureWriter" do
     FactoryBot.create(:animal, name: "Joe")
 
     writer = FactoryBot::FixtureGenerator::FixtureWriter.new(recorder)
-    writer.to_s.must_equal %q{
+    expect(writer.to_s).must_equal %q{
       FactoryBot.create(:animal)
       FactoryBot.create(:animal)
       FactoryBot.create(:animal)
