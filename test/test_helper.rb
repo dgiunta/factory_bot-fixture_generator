@@ -11,6 +11,8 @@ require "minitest/around"
 require "minitest/spec"
 require "minitest/autorun"
 
+require "active_record"
+
 ENV['DATABASE_URL'] = 'postgresql://postgres:postgres@localhost:5433/factory_bot_fixture_generator_test'
 ActiveRecord::Base.establish_connection
 

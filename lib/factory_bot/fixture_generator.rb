@@ -1,6 +1,5 @@
 require 'pry'
 require 'digest'
-require "active_record"
 require "factory_bot"
 require "factory_bot/fixture_generator/version"
 
@@ -51,8 +50,6 @@ module FactoryBot
         identity_map[key_for(factory_name, *args)]
       end
 
-      private
-
       def identity_map
         @identity_map ||= {}
       end
@@ -60,6 +57,8 @@ module FactoryBot
       def args_map
         @args_map ||= {}
       end
+
+      private
 
       def counts
         @counts ||= Hash.new(0)
@@ -93,7 +92,7 @@ module FactoryBot
       end
 
       def to_s
-        recorder.identity_map.map do |k, objects|
+        recorder.identity_map.flat_map do |k, objects|
           objects.map do |obj|
             "FactoryBot.create(#{recorder.args_map[k].map(&:inspect).join(", ")})"
           end
