@@ -48,11 +48,11 @@ describe "FactoryBot::FixtureGenerator" do
 
   it "reuses preloaded data" do
     recorder = FactoryBot::FixtureGenerator::Recorder.new
-    recorder.send(:identity_map)[recorder.key_for(:animal)] = [
+    recorder.identity_map[recorder.key_for(:animal)] = [
       pre_animal_1 = Animal.create(name: "Bear"),
       pre_animal_2 = Animal.create(name: "Bear")
     ]
-    recorder.send(:identity_map)[recorder.key_for(:animal, name: "Bob")] = [
+    recorder.identity_map[recorder.key_for(:animal, name: "Bob")] = [
       pre_bob_1 = Animal.create(name: "Bob"),
       pre_bob_2 = Animal.create(name: "Bob")
     ]
