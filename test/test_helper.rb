@@ -47,5 +47,13 @@ class Minitest::Spec
   end
 end
 
-factory_fixtures_file = File.join(File.dirname(__FILE__), "factory_fixtures.rb")
-load factory_fixtures_file if File.exist?(factory_fixtures_file)
+FactoryBot::FixtureGenerator.configure do |config|
+  config.fixture_file = "./test/factory_fixtures.rb"
+end
+
+FactoryBot::FixtureGenerator.enable_recording!
+FactoryBot::FixtureGenerator.load_fixtures!
+
+Minitest.after_run do
+  FactoryBot::FixtureGenerator.save_fixtures!
+end
