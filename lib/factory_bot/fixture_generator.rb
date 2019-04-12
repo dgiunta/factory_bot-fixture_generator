@@ -1,29 +1,17 @@
 require 'pry'
 require 'digest'
 require "factory_bot"
-require "factory_bot/fixture_generator/version"
-require "factory_bot/fixture_generator/recorder"
+require "factory_bot/fixture_generator/configuration"
+require "factory_bot/fixture_generator/factory_methods"
 require "factory_bot/fixture_generator/fixture_writer"
+require "factory_bot/fixture_generator/recorder"
+require "factory_bot/fixture_generator/version"
 
 module FactoryBot
   module FixtureGenerator
-    module FactoryMethods
-      def create(factory_name, *args)
-        FixtureGenerator.recorder.record(factory_name, *args) do
-          super(factory_name, *args)
-        end
-      end
-    end
-
-    class Configuration
-      attr_writer :fixture_file
-
-      def fixture_file
-        @fixture_file ||= File.join()
-      end
-    end
-
     class << self
+      attr_writer :recorder
+
       def config
         @config ||= Configuration.new
       end
@@ -34,11 +22,14 @@ module FactoryBot
 
       def enable_recording!
         FactoryBot.extend FactoryMethods
+        FactoryBot::SyntaxRunner.include FactoryMethods
       end
 
       def load_fixtures!
-        puts "loading fixtures from #{config.fixture_file}"
+        start = Time.now
+        print "[FixtureBot::FixtureGenerator] Loading fixtures from #{config.fixture_file}..."
         load config.fixture_file if File.exist?(config.fixture_file)
+        puts "done. (#{Time.now - start}s)"
       end
 
       def save_fixtures!
@@ -49,8 +40,8 @@ module FactoryBot
         @recorder ||= Recorder.new
       end
 
-      def recorder=(recorder)
-        @recorder = recorder
+      def reset_recorder!
+        @recorder = Recorder.new
       end
     end
   end

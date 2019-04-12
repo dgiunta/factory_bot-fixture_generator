@@ -23,6 +23,12 @@ module FactoryBot
         counts[key_for(factory_name, *args)]
       end
 
+      def find_identity_for(active_record_object)
+        identity_map.detect do |key, objects|
+          objects.include?(active_record_object)
+        end
+      end
+
       def identities_for(factory_name, *args)
         identity_map[key_for(factory_name, *args)]
       end
@@ -48,7 +54,7 @@ module FactoryBot
       def find_or_create_in_identity_map(key, index, &block)
         identity_map[key] ||= []
         if object = identity_map[key][index].presence
-          object.reload
+          object.reload rescue block.call
         else
           identity_map[key][index] = block.call
         end
