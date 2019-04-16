@@ -22,7 +22,6 @@ module FactoryBot
 
       def enable_recording!
         FactoryBot.extend FactoryMethods
-        FactoryBot::SyntaxRunner.include FactoryMethods
       end
 
       def load_fixtures!

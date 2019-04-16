@@ -9,7 +9,6 @@ describe "FactoryBot::FixtureGenerator::Recorder" do
   it "works with nested create_list with default count" do
     kingdom = FactoryBot.create(:kingdom, with_animals: true)
     expect(recorder.identities_for(:kingdom, with_animals: true).length).must_equal 1
-    # default animal count is 5
-    expect(recorder.identities_for(:animal, kingdom: kingdom).length).must_equal 5
+    expect(recorder.identities_for(:animal, kingdom: kingdom)).must_be_nil
   end
 end
