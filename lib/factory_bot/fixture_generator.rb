@@ -21,8 +21,7 @@ module FactoryBot
       end
 
       def enable_recording!
-        FactoryGirl.extend FactoryMethods rescue nil
-        FactoryBot.extend FactoryMethods
+        config.factory_klass.extend FactoryMethods
       end
 
       def load_fixtures!

@@ -36,24 +36,45 @@ module FactoryBot
       private
 
       def factory_entry(factory_key, object, index)
-        factory, *args = recorder.args_map[factory_key]
+        factory, *args = args_map[factory_key]
 
         args.last&.each do |k, v|
           if v.is_a?(ActiveRecord::Base)
             key, objects = recorder.find_identity_for(v)
-            object_index = objects.index(v)
 
-            args.last[k] = variable_name(key, object_index)
+            # if we can't find the object in our identity map
+            # that must mean we created the object incidentally
+            # through some other rmeans. In that case, we should
+            # remove the argument from this list.
+            if objects.nil?
+              args.last.delete(k)
+            else
+              object_index = objects.index(v)
+
+              args.last[k] = variable_name(key, object_index)
+            end
           end
         end
 
         var_name = variable_name(factory_key, index)
-        "#{var_name} = FactoryBot.create(#{[factory.inspect, *args].compact.join(", ")})"
+        "#{var_name} = #{config.factory_klass}.create(#{[factory.inspect, *args].compact.join(", ")})"
       end
 
       def variable_name(key, index)
         factory, *_args = recorder.args_map[key]
         VarString.new("_" + [factory, key, index].join("_"))
+      end
+
+      def identity_map
+        @identity_map ||= recorder.identity_map.dup
+      end
+
+      def args_map
+        @args_map ||= recorder.args_map.dup
+      end
+
+      def config
+        @config ||= FactoryBot::FixtureGenerator.config
       end
     end
   end
