@@ -61,9 +61,13 @@ module FactoryBot
       end
 
       def recordable?(factory_name)
-        klass = FactoryBot.factories[factory_name].build_class
+        klass = config.factory_klass.factories[factory_name].build_class
 
         klass.respond_to?(:descends_from_active_record?) && klass.descends_from_active_record?
+      end
+
+      def config
+        @config ||= FactoryBot::FixtureGenerator.config
       end
     end
   end
