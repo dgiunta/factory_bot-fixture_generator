@@ -36,9 +36,11 @@ module FactoryBot
       private
 
       def factory_entry(factory_key, object, index)
-        factory, *args = args_map[factory_key]
+        factory, *args = args_map[factory_key].dup
 
-        args.last&.each do |k, v|
+        hash_args, rest_args = args.partition {|arg| arg.is_a?(Hash) }
+        hash_args = hash_args.first
+        hash_args&.each do |k, v|
           if v.is_a?(ActiveRecord::Base)
             key, objects = recorder.find_identity_for(v)
 
@@ -47,17 +49,17 @@ module FactoryBot
             # through some other rmeans. In that case, we should
             # remove the argument from this list.
             if objects.nil?
-              args.last.delete(k)
+              hash_args.delete(k)
             else
               object_index = objects.index(v)
 
-              args.last[k] = variable_name(key, object_index)
+              hash_args[k] = variable_name(key, object_index)
             end
           end
         end
 
         var_name = variable_name(factory_key, index)
-        "#{var_name} = #{config.factory_klass}.create(#{[factory.inspect, *args].compact.join(", ")})"
+        "#{var_name} = #{config.factory_klass}.create(#{[factory.inspect, *rest_args, hash_args].compact.join(", ")})"
       end
 
       def variable_name(key, index)
@@ -66,11 +68,11 @@ module FactoryBot
       end
 
       def identity_map
-        @identity_map ||= recorder.identity_map.dup
+        @identity_map ||= recorder.identity_map
       end
 
       def args_map
-        @args_map ||= recorder.args_map.dup
+        @args_map ||= recorder.args_map
       end
 
       def config
