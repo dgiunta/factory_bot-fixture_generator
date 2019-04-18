@@ -58,6 +58,8 @@ module FactoryBot
           end
         end
 
+        rest_args = rest_args.map(&:inspect)
+
         var_name = variable_name(factory_key, index)
         "#{var_name} = #{config.factory_klass}.create(#{[factory.inspect, *rest_args, hash_args].compact.join(", ")})"
       end
